@@ -8,7 +8,7 @@ The second version of the [PhoneBook](https://github.com/AregGhazaryan/phonebook
 
 
 ## Getting Started
-To make the application work you must set up the default path to public folder otherwise the application wont work!.
+#### Important To make the application work you must set up the default path to public folder.
 
 Create empty "config.ini" in app main root folder where config.php is.Create a database with any name you like, when you will open the application it will start a first run configuration page in which you should fill the information about your database such as username and password. After that the app will fill the config.ini file which will include all the information needed to connect to your database. 
 
