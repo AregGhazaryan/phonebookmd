@@ -25,7 +25,7 @@ function getNum() {
 }
 
 function userMiddleware($path) {
-  if(isset($_SESSION['is_logged_in'])){
+  if (isset($_SESSION['is_logged_in'])) {
     if ($_SESSION['is_logged_in']) {
       exit(header('location: ' . ROOT_PATH . $path));
     }
@@ -33,80 +33,82 @@ function userMiddleware($path) {
 }
 
 function fileExists(){
-   if(!file_exists("../config.ini")){
+   if (!file_exists("../config.ini")) {
      setMsg('You Haven\'t Created The Config.ini File','error');
      display();
      return false;
-   }else{
+   }
+   else {
      return true;
    }
  }
 
 function isWriteable(){
        $try = is_writable('../config.ini');
-       if(!$try){
+       if (!$try) {
          setMsg('Config.ini should have write permissions.','error');
          display();
          return false;
-       }else{
+       }
+       else {
          return true;
        }
  }
 
  function isInstalled(){
-   if(@filesize('../config.ini') > 0){
+   if (@filesize('../config.ini') > 0) {
      return true;
-   }else{
+   }
+   else {
      return false;
    }
  }
 
  function firstRun(){
-   if(@filesize('../config.ini') !== 0){
+   if (@filesize('../config.ini') !== 0) {
      $ini_array = @parse_ini_file("../config.ini");
      $reinstall = $ini_array['reinstall'];
-     if($reinstall){
+     if ($reinstall) {
        return true;
-     }else{
+     }
+     else {
        return false;
      }
-   }else{
+   }
+   else {
      return false;
    }
  }
 
- function reinstall(){
-   if(@filesize('../config.ini') !== 0){
+ function reinstall() {
+   if (@filesize('../config.ini') !== 0) {
      $ini_array = @parse_ini_file("../config.ini");
      $reinstall = $ini_array['reinstall'];
-     if($reinstall === '2'){
+     if ($reinstall === '2') {
        return true;
-     }else{
+     }
+     else {
        return false;
      }
-   }else{
+   }
+   else {
      return false;
    }
  }
 
- function toggle(){
+ function toggle() {
    $filepath = '../config.ini';
-   //after the form submit
-   $data = @parse_ini_file("../config.ini");;
+   $data = @parse_ini_file("../config.ini");
    $data['reinstall'] = '1';
-   //update ini file, call function
    function update_ini_file($data, $filepath) {
      $content = "";
-     //parse the ini file to get the sections
-     //parse the ini file using default parse_ini_file() PHP function
      $parsed_ini = parse_ini_file($filepath, true);
      foreach($data as $section => $values){
-       if($section === "submit"){
+       if ($section === "submit") {
          continue;
        }
        $content .=	$section ."=". $values . "\n";
      }
-     //write it into file
      if (!$handle = fopen($filepath, 'w')) {
        return false;
      }

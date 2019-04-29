@@ -7,8 +7,7 @@ class Router
     protected $routes = [];
     protected $params = [];
 
-    public function add($route, $params = [])
-    {
+    public function add($route, $params = []) {
         $route = preg_replace('/\//', '\\/', $route);
 
         $route = preg_replace('/\{([a-z]+)\}/', '(?P<\1>[a-z-]+)', $route);
@@ -20,20 +19,17 @@ class Router
         $this->routes[$route] = $params;
     }
 
-    public function getRoutes()
-    {
+    public function getRoutes() {
         return $this->routes;
     }
 
-    public function listRoutes()
-    {
+    public function listRoutes() {
         echo "<pre>";
         echo var_dump($this->getRoutes());
         echo "</pre>";
     }
 
-    public function match($url)
-    {
+    public function match($url) {
         foreach ($this->routes as $route => $params) {
             if (preg_match($route, $url, $matches)) {
                 foreach ($matches as $key => $match) {
@@ -48,13 +44,11 @@ class Router
         return false;
     }
 
-    public function getParams()
-    {
+    public function getParams() {
         return $this->params;
     }
 
-    public function checkUrl($url)
-    {
+    public function checkUrl($url) {
         if (is_null($url)) {
             $url = "";
         }
@@ -62,13 +56,13 @@ class Router
             echo '<pre>';
             var_dump($this->getParams());
             echo '</pre>';
-        } else {
+        }
+        else {
             echo "No Route Found";
         }
     }
 
-    public function dispatch($url)
-    {
+    public function dispatch($url) {
         $url = $this->removeQueryStringVariables($url);
 
         if ($this->match($url)) {
@@ -84,43 +78,43 @@ class Router
 
                 if (is_callable([$controller_object, $action])) {
                     $controller_object->$action();
-                } else {
+                }
+                else {
                     throw new \Exception("Method $action (in controller $controller) not found");
                 }
-            } else {
+            }
+            else {
                 echo "Controller class $controller not found";
             }
-        } else {
+        }
+        else {
             echo "No route matched.";
         }
     }
 
-    protected function convertToStudlyCaps($string)
-    {
+    protected function convertToStudlyCaps($string) {
         return str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
     }
 
-    protected function convertToCamelCase($string)
-    {
+    protected function convertToCamelCase($string) {
         return lcfirst($this->convertToStudlyCaps($string));
     }
 
-    protected function removeQueryStringVariables($url)
-    {
+    protected function removeQueryStringVariables($url) {
         if ($url != '') {
             $parts = explode('&', $url, 2);
 
             if (strpos($parts[0], '=') === false) {
                 $url = $parts[0];
-            } else {
+            }
+            else {
                 $url = '';
             }
         }
         return $url;
     }
 
-    protected function getNamespace()
-    {
+    protected function getNamespace() {
       $namespace = 'App\Controllers\\';
 
       if (array_key_exists('namespace', $this->params)) {

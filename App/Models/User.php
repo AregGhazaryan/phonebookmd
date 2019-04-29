@@ -4,15 +4,15 @@ use PDO;
 
 class User extends \Core\Model
 {
-  public function insert($post)
-  {
+  public function insert($post) {
     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
     $password = md5($post['password']);
     if ($post['submit']) {
-      if(empty($post['fname']) || empty($post['lname']) || empty($post['email']) || empty($post['password'])){
+      if (empty($post['fname']) || empty($post['lname']) || empty($post['email']) || empty($post['password'])) {
         $_SESSION['errorMsg'] = 'One of the fields is empty!';
         exit(header('Location: '.ROOT_PATH.'/home/register'));
-      }else{
+      }
+      else{
         $this->query('INSERT INTO users (f_name, l_name, email, pwd, img) VALUES(:fname, :lname , :email, :password, :img)');
         $this->bind(':fname', $post['fname']);
         $this->bind(':lname', $post['lname']);
@@ -20,9 +20,7 @@ class User extends \Core\Model
         $this->bind(':img', 'default.png');
         $this->bind(':password', $password);
         $this->execute();
-        // Verify
         if ($this->lastInsertId()) {
-          // Set Message and Redirect
           $_SESSION['successMsg'] = 'Congratulations, you\'ve been successfully registered, you can login now!';
           exit(header('Location: '.ROOT_PATH.'/home/login'));
         }
@@ -91,11 +89,9 @@ CREATE TABLE IF NOT EXISTS users (
 
   public function login($post){
     userMiddleware('/');
-    // Sanitize POST
     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
     $password = md5($post['password']);
     if ($post['submit']) {
-        // Compare Login
         $this->query('SELECT * FROM users WHERE email = :email AND pwd = :password');
         $this->bind(':email', $post['email']);
         $this->bind(':password', $password);
@@ -108,7 +104,8 @@ CREATE TABLE IF NOT EXISTS users (
                 "email"	=> $row['email']
             );
             header('Location: '.ROOT_PATH.'/users/'.$_SESSION['user_data']['id'].'/profile');
-        } else {
+        }
+        else {
             $_SESSION['errorMsg']="Incorrect Login!";
             exit(header("Location: ".ROOT_PATH."/home/login"));
         }
@@ -137,23 +134,30 @@ CREATE TABLE IF NOT EXISTS users (
     $this->query('UPDATE users SET f_name = :fname, l_name= :lname, email = :email, pwd=:password, img = :img	WHERE id =:id');
     if ($post['fname'] === "" || empty($post['fname'])) {
         $this->bind(':fname', $old['f_name']);
-    } else {
+    }
+    else {
         $this->bind(':fname', $post['fname']);
     }
+
     if ($post['lname'] === "" || empty($post['lname'])) {
         $this->bind(':lname', $old['l_name']);
-    } else {
+    }
+    else {
         $this->bind(':lname', $post['lname']);
     }
+
     if ($post['email'] === "" || empty($post['email'])) {
         $this->bind(':email', $old['email']);
-    } else {
+    }
+    else {
         $this->bind(':email', $post['email']);
     }
-    if ($_FILES['image'] === "" || empty($_FILES['image']) || $_FILES['image']['size']==0) {
+
+    if ($_FILES['image'] === "" || empty($_FILES['image']) || $_FILES['image']['size'] == 0) {
         $this->bind(':img', $old['img']);
-    } else {
-        if ($_FILES['image']['size']>0) {
+    }
+    else {
+        if ($_FILES['image']['size'] > 0) {
             $file_name = $_FILES['image']['name'];
             $file_size = $_FILES['image']['size'];
             $file_tmp  = $_FILES['image']['tmp_name'];
@@ -172,13 +176,14 @@ CREATE TABLE IF NOT EXISTS users (
             }
             if (empty($errors) == true) {
                 $bad = array("'", '"', "/", "\\", "<", ">", "!", "@", "#", "$", "%", "^","&", "*", "(",")","+");
-                $file_name = str_replace($bad, "",$filenm) . "-" .uniqid().".".$file_ext;
-                move_uploaded_file($file_tmp, "./assets/img/avis/".$file_name);
-                if($old['img'] !== "default.png"){
+                $file_name = str_replace($bad, "", $filenm) . "-" . uniqid() . "." . $file_ext;
+                move_uploaded_file($file_tmp, "./assets/img/avis/" . $file_name);
+                if ($old['img'] !== "default.png") {
                   unlink('./assets/img/avis/' . $old['img']);
                 }
                 $this->bind(':img', $file_name);
-            } else {
+            }
+            else {
                 $this->bind(':img', $old['img']);
             }
         }

@@ -44,16 +44,17 @@ class Contact extends \Core\Model
         displayFloat();
         exit();
       }
-       elseif ($post['fname']==="" && $post['lname']==="") {
+       elseif ($post['fname'] === "" && $post['lname'] === "") {
         setMsg('First Name Or Last Name Is Required', 'error');
         displayFloat();
         exit();
-      } elseif (strlen($post['fname'])>50 || strlen($post['lname'])>50 || strlen($post['address'])>95  || strlen($post['email'])>62) {
+      }
+      elseif (strlen($post['fname']) > 50 || strlen($post['lname']) > 50 || strlen($post['address']) > 95  || strlen($post['email']) > 62) {
         setMsg('One of the fields exceeds the allowed amount of characters', 'error');
         displayFloat();
         exit();
       }
-      else{
+      else {
         $uinqid = uniqid();
         $id = $_SESSION['user_data']['id'];
         $this->query('INSERT INTO contacts (fname, lname, email, address, uid, uniqid, image) VALUES(:fname, :lname , :email, :address, :id, :uniid, :img)');
@@ -65,17 +66,18 @@ class Contact extends \Core\Model
         $this->bind(':uniid', $uinqid);
         if ($_FILES['image']['size'] <= 0) {
             $this->bind(':img', 'default.png');
-        } else {
-            if ($_FILES['image']['size']>0) {
+        }
+        else {
+            if ($_FILES['image']['size'] > 0) {
                 $file_name = $_FILES['image']['name'];
-                $file_size =$_FILES['image']['size'];
-                $file_tmp =$_FILES['image']['tmp_name'];
-                $file_type=$_FILES['image']['type'];
+                $file_size = $_FILES['image']['size'];
+                $file_tmp  = $_FILES['image']['tmp_name'];
+                $file_type = $_FILES['image']['type'];
                 $explosion = explode('.', $file_name);
-                $file_ext=strtolower(end($explosion));
-                $filenm = reset($explosion);
+                $file_ext  = strtolower(end($explosion));
+                $filenm    = reset($explosion);
                 $extensions= array("jpeg","jpg","png");
-                if (in_array($file_ext, $extensions)=== false) {
+                if (in_array($file_ext, $extensions) === false) {
                     setMsg('Invalid image extension', 'error');
                     displayFloat();
                     exit();
@@ -85,12 +87,13 @@ class Contact extends \Core\Model
                     displayFloat();
                     exit();
                 }
-                if (empty($errors)==true) {
+                if (empty($errors) == true) {
                     $bad = array("'", '"', "/", "\\", "<", ">", "!", "@", "#", "$", "%", "^","&", "*", "(",")","+");
                     $file_name = str_replace($bad, "",$filenm) . "-" .uniqid().".".$file_ext;
                     move_uploaded_file($file_tmp, "./Assets/img/userimgs/".$file_name);
                     $this->bind(':img', $file_name);
-                } else {
+                }
+                else {
                     $this->bind(':img', 'default.png');
                 }
             }
@@ -136,11 +139,13 @@ public function update($post) {
     setMsg('Fields Are Empty', 'error');
     displayFloat();
     exit();
-  } elseif ($post['fname'] === "" && $post['lname'] === "") {
+  }
+  elseif ($post['fname'] === "" && $post['lname'] === "") {
     setMsg('One of the name fields is required!', 'error');
     displayFloat();
     exit();
-  } else {
+  }
+  else {
     if ($post['fname'] === "" && $post['lname'] === "" && $post['password'] === "" && $post['email'] === "") {
       setMsg('All fields were empty information hasn\'t changed!', 'error');
       displayFloat();
@@ -161,7 +166,7 @@ public function update($post) {
     $explosion = explode('.', $_FILES['image']['name']);
     $file_ext  = strtolower(end($explosion));
     $filenm    = reset($explosion);
-    $extensions = array("jpeg","jpg","png");
+    $extensions= array("jpeg","jpg","png");
     if (in_array($file_ext, $extensions) === false) {
       $errors[] = "extension not allowed, please choose a JPEG or PNG file.";
       setMsg('Extension not allowed, please choose a JPEG or PNG file!', 'error');
@@ -176,21 +181,24 @@ public function update($post) {
     }
     if (empty($errors) == true) {
       $bad = array("'", '"', "/", "\\", "<", ">", "!", "@", "#", "$", "%", "^","&", "*", "(",")","+");
-      $file_name = str_replace($bad, "", $filenm) . "-" .uniqid() . "." . $file_ext;
+      $file_name = str_replace($bad, "", $filenm) . "-" . uniqid() . "." . $file_ext;
       if ($old['image'] !== "default.png") {
         move_uploaded_file($file_tmp, "./Assets/img/userimgs/" . $file_name);
         unlink('./Assets/img/userimgs/' . $old['image']);
         $this->bind(':img', $file_name);
-      }else{
+      }
+      else{
         move_uploaded_file($file_tmp, "./Assets/img/userimgs/" . $file_name);
         $this->bind(':img', $file_name);
       }
-    } else {
+    }
+    else {
       setMsg('Something went wrong, please try again later!', 'error');
       displayFloat();
       exit();
     }
-  }else{
+  }
+  else{
     $this->bind(':img', $old['image']);
   }
       $this->bind(':fname', $post['fname']);
@@ -216,4 +224,5 @@ public function update($post) {
     }
     return 'success';
   }
+  
 }
